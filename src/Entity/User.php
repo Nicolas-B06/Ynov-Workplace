@@ -41,9 +41,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Group::class, orphanRemoval: true)]
     private Collection $ownedGroups;
 
+    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'members')]
+    private Collection $relatedGroups;
+
     public function __construct()
     {
         $this->ownedGroups = new ArrayCollection();
+        $this->relatedGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -178,6 +182,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $ownedGroup->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getRelatedGroups(): Collection
+    {
+        return $this->relatedGroups;
+    }
+
+    public function addRelatedGroup(Group $relatedGroup): self
+    {
+        if (!$this->relatedGroups->contains($relatedGroup)) {
+            $this->relatedGroups->add($relatedGroup);
+        }
+
+        return $this;
+    }
+
+    public function removeRelatedGroup(Group $relatedGroup): self
+    {
+        $this->relatedGroups->removeElement($relatedGroup);
 
         return $this;
     }
