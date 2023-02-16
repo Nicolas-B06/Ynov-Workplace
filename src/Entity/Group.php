@@ -38,14 +38,6 @@ class Group
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
-    #[ORM\OneToMany(mappedBy: 'relatedGroup', targetEntity: Thread::class, orphanRemoval: true)]
-    private Collection $relatedThreads;
-
-    public function __construct()
-    {
-        $this->relatedThreads = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -119,36 +111,6 @@ class Group
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Thread>
-     */
-    public function getRelatedThreads(): Collection
-    {
-        return $this->relatedThreads;
-    }
-
-    public function addRelatedThread(Thread $relatedThread): self
-    {
-        if (!$this->relatedThreads->contains($relatedThread)) {
-            $this->relatedThreads->add($relatedThread);
-            $relatedThread->setRelatedGroup($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRelatedThread(Thread $relatedThread): self
-    {
-        if ($this->relatedThreads->removeElement($relatedThread)) {
-            // set the owning side to null (unless already changed)
-            if ($relatedThread->getRelatedGroup() === $this) {
-                $relatedThread->setRelatedGroup(null);
-            }
-        }
 
         return $this;
     }
