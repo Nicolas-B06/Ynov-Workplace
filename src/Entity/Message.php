@@ -30,11 +30,11 @@ class Message
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $owner = null;
+    private ?User $owner = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?thread $thread = null;
+    private ?Thread $thread = null;
 
     public function getId(): ?int
     {
