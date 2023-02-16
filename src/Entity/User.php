@@ -45,10 +45,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'members')]
     private Collection $subscribedGroups;
 
+    #[ORM\OneToMany(mappedBy: 'requestingUser', targetEntity: GroupRequest::class, orphanRemoval: true)]
+    private Collection $groupRequests;
+
     public function __construct()
     {
         $this->ownedGroups = new ArrayCollection();
         $this->subscribedGroups = new ArrayCollection();
+        $this->groupRequests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -209,6 +213,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->subscribedGroups->removeElement($subscribedGroup)) {
             $subscribedGroup->removeMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupRequest>
+     */
+    public function getGroupRequests(): Collection
+    {
+        return $this->groupRequests;
+    }
+
+    public function addGroupRequest(GroupRequest $groupRequest): self
+    {
+        if (!$this->groupRequests->contains($groupRequest)) {
+            $this->groupRequests->add($groupRequest);
+            $groupRequest->setRequestingUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupRequest(GroupRequest $groupRequest): self
+    {
+        if ($this->groupRequests->removeElement($groupRequest)) {
+            // set the owning side to null (unless already changed)
+            if ($groupRequest->getRequestingUser() === $this) {
+                $groupRequest->setRequestingUser(null);
+            }
         }
 
         return $this;

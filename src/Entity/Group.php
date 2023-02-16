@@ -41,9 +41,13 @@ class Group
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'subscribedGroups')]
     private Collection $members;
 
+    #[ORM\OneToMany(mappedBy: 'requestedGroup', targetEntity: GroupRequest::class, orphanRemoval: true)]
+    private Collection $groupRequests;
+
     public function __construct()
     {
         $this->members = new ArrayCollection();
+        $this->groupRequests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,6 +147,36 @@ class Group
     public function removeMember(User $member): self
     {
         $this->members->removeElement($member);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupRequest>
+     */
+    public function getGroupRequests(): Collection
+    {
+        return $this->groupRequests;
+    }
+
+    public function addGroupRequest(GroupRequest $groupRequest): self
+    {
+        if (!$this->groupRequests->contains($groupRequest)) {
+            $this->groupRequests->add($groupRequest);
+            $groupRequest->setRequestedGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupRequest(GroupRequest $groupRequest): self
+    {
+        if ($this->groupRequests->removeElement($groupRequest)) {
+            // set the owning side to null (unless already changed)
+            if ($groupRequest->getRequestedGroup() === $this) {
+                $groupRequest->setRequestedGroup(null);
+            }
+        }
 
         return $this;
     }
