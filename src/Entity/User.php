@@ -41,9 +41,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Group::class, orphanRemoval: true)]
     private Collection $ownedGroups;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Thread::class)]
+    private Collection $ownedThreads;
+
     public function __construct()
     {
         $this->ownedGroups = new ArrayCollection();
+        $this->ownedThreads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,6 +180,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($ownedGroup->getOwner() === $this) {
                 $ownedGroup->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Thread>
+     */
+    public function getOwnedThreads(): Collection
+    {
+        return $this->ownedThreads;
+    }
+
+    public function addOwnedThread(Thread $ownedThread): self
+    {
+        if (!$this->ownedThreads->contains($ownedThread)) {
+            $this->ownedThreads->add($ownedThread);
+            $ownedThread->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOwnedThread(Thread $ownedThread): self
+    {
+        if ($this->ownedThreads->removeElement($ownedThread)) {
+            // set the owning side to null (unless already changed)
+            if ($ownedThread->getOwner() === $this) {
+                $ownedThread->setOwner(null);
             }
         }
 

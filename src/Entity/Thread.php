@@ -27,6 +27,10 @@ class Thread
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $relatedGroup = null;
 
+    #[ORM\ManyToOne(inversedBy: 'ownedThreads')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +80,18 @@ class Thread
     public function setRelatedGroup(?Group $relatedGroup): self
     {
         $this->relatedGroup = $relatedGroup;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
