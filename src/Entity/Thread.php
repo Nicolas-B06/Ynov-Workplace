@@ -23,6 +23,10 @@ class Thread
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'relatedThreads')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Group $relatedGroup = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +64,18 @@ class Thread
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getRelatedGroup(): ?Group
+    {
+        return $this->relatedGroup;
+    }
+
+    public function setRelatedGroup(?Group $relatedGroup): self
+    {
+        $this->relatedGroup = $relatedGroup;
 
         return $this;
     }
