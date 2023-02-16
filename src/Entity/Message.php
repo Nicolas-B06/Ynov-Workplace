@@ -28,6 +28,14 @@ class Message
     #[ORM\Column]
     private ?bool $masked = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?user $owner = null;
+
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?thread $thread = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,6 +85,30 @@ class Message
     public function setMasked(bool $masked): self
     {
         $this->masked = $masked;
+
+        return $this;
+    }
+
+    public function getOwner(): ?user
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?user $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getThread(): ?thread
+    {
+        return $this->thread;
+    }
+
+    public function setThread(?thread $thread): self
+    {
+        $this->thread = $thread;
 
         return $this;
     }
