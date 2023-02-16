@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -35,6 +37,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Group::class, orphanRemoval: true)]
+    private Collection $ownedGroups;
+
+    public function __construct()
+    {
+        $this->ownedGroups = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -138,6 +148,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getOwnedGroups(): Collection
+    {
+        return $this->ownedGroups;
+    }
+
+    public function addOwnedGroup(Group $ownedGroup): self
+    {
+        if (!$this->ownedGroups->contains($ownedGroup)) {
+            $this->ownedGroups->add($ownedGroup);
+            $ownedGroup->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOwnedGroup(Group $ownedGroup): self
+    {
+        if ($this->ownedGroups->removeElement($ownedGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($ownedGroup->getOwner() === $this) {
+                $ownedGroup->setOwner(null);
+            }
+        }
 
         return $this;
     }
