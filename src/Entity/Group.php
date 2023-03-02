@@ -60,6 +60,7 @@ class Group
 
     #[ORM\ManyToOne(inversedBy: 'ownedGroups')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['group:read'])]
     private ?User $owner = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'subscribedGroups')]
