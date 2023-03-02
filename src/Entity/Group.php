@@ -72,6 +72,9 @@ class Group
     {
         $this->members = new ArrayCollection();
         $this->groupRequests = new ArrayCollection();
+
+        $this->createdAt = new \DateTimeImmutable();
+        $this->isDeleted = false;
     }
 
     public function getId(): ?int
