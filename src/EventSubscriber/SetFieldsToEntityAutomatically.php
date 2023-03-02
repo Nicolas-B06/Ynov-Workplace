@@ -17,7 +17,7 @@ class SetFieldsToEntityAutomatically implements EventSubscriberInterface
   {
   }
 
-  public static function getSubscribedEvents()
+  public static function getSubscribedEvents(): array
   {
     return [
       KernelEvents::VIEW => ['setFieldToEntity', EventPriorities::PRE_WRITE]

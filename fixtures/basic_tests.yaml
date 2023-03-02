@@ -1,0 +1,7 @@
+# api/fixtures/books.yaml
+App\Entity\User:
+    user_{1..10}:
+        nickname: <name()>
+        email: <email()>
+        password: <password()>
+        
