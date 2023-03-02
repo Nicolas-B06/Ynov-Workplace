@@ -17,6 +17,6 @@ class SetFieldsToEntityAutomatically implements EventSubscriberInterface
 
   public function setFieldToEntity()
   {
-    die('here');
+    // die('here');
   }
 }
