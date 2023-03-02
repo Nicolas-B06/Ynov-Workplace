@@ -29,3 +29,7 @@ services:
     App\EventSubscriber\SetFieldsToEntityAutomatically:
         tags:
             - { name : kernel.event_subscriber }
+
+    App\OpenApi\JwtDecorator:
+        decorates: 'api_platform.openapi.factory'
+        arguments: ['@.inner']
