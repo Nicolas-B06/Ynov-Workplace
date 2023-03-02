@@ -47,6 +47,7 @@ class Thread
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Groups(['thread:read', 'thread:create'])]
     #[ORM\ManyToOne(inversedBy: 'relatedThreads')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $relatedGroup = null;
