@@ -25,3 +25,7 @@ services:
     App\State\UserPasswordHasher:
         bind:
             $processor: '@api_platform.doctrine.orm.state.persist_processor'
+
+    App\EventSubscriber\SetFieldsToEntityAutomatically:
+        tags:
+            - { name : kernel.event_subscriber }
