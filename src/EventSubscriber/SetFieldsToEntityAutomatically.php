@@ -34,10 +34,24 @@ class SetFieldsToEntityAutomatically implements EventSubscriberInterface
       $user = $token->getUser();
       if (
         $user !== null &&
-        get_class($entity) === Group::class &&
+        method_exists($entity, 'setOwner') &&
         in_array($method, [Request::METHOD_POST, Request::METHOD_PATCH])
       ) {
+
         $entity->setOwner($user);
+      }
+      if (
+        method_exists($entity, 'setSlug') &&
+        in_array($method, [Request::METHOD_POST, Request::METHOD_PATCH])
+      ) {
+
+        $entity->setSlug($entity->getTitle());
+      }
+      if (
+        method_exists($entity, 'setUpdatedAt') &&
+        in_array($method, [Request::METHOD_PATCH])
+      ) {
+        $entity->setUpdatedAt(new \DateTime());
       }
     }
   }

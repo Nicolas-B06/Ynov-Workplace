@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
@@ -19,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(),
         new Get(),
+        new Post(),
         new Patch(),
         new Delete(),
     ],
@@ -51,6 +51,7 @@ class Message
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['message:read'])]
     private ?User $owner = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
