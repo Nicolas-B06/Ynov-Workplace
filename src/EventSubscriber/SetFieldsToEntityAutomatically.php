@@ -39,6 +39,13 @@ class SetFieldsToEntityAutomatically implements EventSubscriberInterface
       ) {
         $entity->setOwner($user);
       }
+      if (
+        $user !== null &&
+        get_class($entity) === GroupRequest::class &&
+        in_array($method, [Request::METHOD_POST, Request::METHOD_PATCH])
+      ) {
+        $entity->setOwner($user);
+      }
     }
   }
 }
