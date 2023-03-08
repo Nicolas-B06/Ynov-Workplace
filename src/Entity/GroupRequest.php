@@ -2,23 +2,43 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+
 use App\Repository\GroupRequestRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: GroupRequestRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(),
+    ],
+    normalizationContext: ['groups' => ['groupRequest:read']],
+    denormalizationContext: ['groups' => ['groupRequest:write']],
+)]
 class GroupRequest
 {
+    #[Groups(['groupRequest:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['groupRequest:read'])]
     #[ORM\ManyToOne(inversedBy: 'groupRequests')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $requestingUser = null;
 
+    #[Groups(['groupRequest:read', 'groupRequest:write'])]
     #[ORM\ManyToOne(inversedBy: 'groupRequests')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $requestedGroup = null;
