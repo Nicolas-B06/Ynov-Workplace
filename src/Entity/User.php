@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Controller\SelfInfoController;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
@@ -26,6 +27,13 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(),
         new Patch(processor: UserPasswordHasher::class),
         new Delete(),
+        new Get(
+            uriTemplate: '/users/{id}/info',
+            name: 'self_info',
+            controller: SelfInfoController::class,
+            normalizationContext: ['groups' => 'user:nickname'],
+            security: "is_granted('ROLE_USER')"
+        )
     ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:create', 'user:update']],
@@ -57,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:create', 'user:update'])]
     private ?string $plainPassword = null;
 
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:read', 'user:create', 'user:update', 'user:nickname'])]
     #[ORM\Column(length: 20)]
     private ?string $nickname = null;
 
