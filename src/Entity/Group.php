@@ -23,7 +23,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(),
         new Post(),
         new Patch(),
-        new Delete(),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN') or object.owner == user"
+        ),
     ],
     normalizationContext: ['groups' => ['group:read']],
     denormalizationContext: ['groups' => ['group:write']],
