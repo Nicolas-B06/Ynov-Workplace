@@ -11,6 +11,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GroupRequestRepository::class)]
 #[ApiResource(
+    // Par défaut, l'utilisateur n'a accès aux endpoints que si sont role est ROLE_USER ou plus
+    security: "is_granted('ROLE_USER')",
     operations: [
         new GetCollection(),
         new Post(),
