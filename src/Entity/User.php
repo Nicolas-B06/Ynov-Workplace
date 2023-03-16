@@ -21,12 +21,24 @@ use App\Controller\SelfInfoController;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
+    // Par défaut, l'utilisateur n'a accès aux endpoints que si sont role est ROLE_USER ou plus
+    security: "is_granted('ROLE_USER')",
     operations: [
         new GetCollection(),
-        new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
+        new Post(
+            processor: UserPasswordHasher::class,
+            validationContext: ['groups' => ['Default', 'user:create']]
+        ),
         new Get(),
-        new Patch(processor: UserPasswordHasher::class),
-        new Delete(),
+        new Patch(
+            processor: UserPasswordHasher::class,
+            // On vérifie que l'utilisateur est admin ou qu'il est l'utilisateur ciblé
+            security: "is_granted('ROLE_ADMIN') or object == user"
+        ),
+        new Delete(
+            // On vérifie que l'utilisateur est admin ou qu'il est l'utilisateur ciblé
+            security: "is_granted('ROLE_ADMIN') or object == user"
+        ),
         new Get(
             uriTemplate: '/users/{id}/info',
             name: 'self_info',

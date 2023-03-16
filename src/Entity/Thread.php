@@ -17,12 +17,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThreadRepository::class)]
 #[ApiResource(
+    // Par défaut, l'utilisateur n'a accès aux endpoints que si sont role est ROLE_USER ou plus
+    security: "is_granted('ROLE_USER')",
     operations: [
         new GetCollection(),
         new Post(),
         new Get(),
-        new Patch(),
-        new Delete(),
+        new Patch(
+            // On vérifie que l'utilisateur est le propriétaire de la resource ou qu'il est admin
+            security: "is_granted('ROLE_ADMIN') or object.owner == user"
+        ),
+        new Delete(
+            // On vérifie que l'utilisateur est le propriétaire de la resource ou qu'il est admin
+            security: "is_granted('ROLE_ADMIN') or object.owner == user"
+        ),
     ],
     normalizationContext: ['groups' => ['thread:read']],
     denormalizationContext: ['groups' => ['thread:create', 'thread:update']],
